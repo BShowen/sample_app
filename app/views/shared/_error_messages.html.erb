@@ -1,0 +1,16 @@
+<% if @user.errors.any? %>
+  <% errors = @user.errors.full_messages.uniq %>
+  <% if errors.include?("Password can't be blank") %>
+  <% errors.delete('Password is too short (minimum is 6 characters)') %>
+<% end %>
+  <div id="error_explanation">
+    <div class="alert alert-danger">
+      The form contains <%= pluralize(errors.count, "error") %>.
+    </div>
+    <ul>
+      <% errors.each do |msg| %>  
+          <li><%= msg  %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
