@@ -28,7 +28,7 @@ class UserSignupTest < ActionDispatch::IntegrationTest
     end
     follow_redirect!
     assert_template 'users/show'
-    # assert_equal flash[:success], "Welcome to the sample app!"
+    assert is_logged_in? # is_logged_in? is a method I defined inside of test_hepler.rb I couldve just inlcude SessionsHelper in test_helper.rb and used the method logged_in? instead. 
     assert flash[:success]
   end
   
