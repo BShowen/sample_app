@@ -4,7 +4,14 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find_by(id: params[:id])
+    # Commented out code ensures that users cant modify the url to access someone elses profile. Im not that far along in the tutorial though. Im curious to see how Hartle does this. 
+    # if !logged_in? 
+      # render plain: "please login!"
+    # elsif current_user.id != params[:id].to_i
+      # render plain: "cant do that!"
+    # else
+      @user = User.find_by(id: params[:id])
+    # end
   end
 
   def create
