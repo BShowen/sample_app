@@ -18,6 +18,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
+      remember @user # I added this line of code. This isnt in the tutorial. 
       flash[:success] = "Welcome to the sample app!"
       redirect_to user_path(@user.id)
     else
