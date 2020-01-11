@@ -1,17 +1,20 @@
 class UsersController < ApplicationController
+  before_action :require_login, only: [:index, :show]
+  
   def new
     @user = User.new
   end
 
+  def update
+  end
+
+  def edit
+    @user = User.find_by(id: 4)
+    render :new
+  end
+
   def show
-    # Commented out code ensures that users cant modify the url to access someone elses profile. Im not that far along in the tutorial though. Im curious to see how Hartle does this. 
-    # if !logged_in? 
-      # render plain: "please login!"
-    # elsif current_user.id != params[:id].to_i
-      # render plain: "cant do that!"
-    # else
       @user = User.find_by(id: params[:id])
-    # end
   end
 
   def create
@@ -29,5 +32,12 @@ class UsersController < ApplicationController
   private
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end 
+
+    def require_login
+      if !logged_in?
+        flash[:warning] = "You must be logged in"
+        redirect_to login_path 
+      end
     end
 end
