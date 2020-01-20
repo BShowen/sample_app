@@ -42,7 +42,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test "to ensure signup checkbox is wokring properly" do 
     log_in_as @user, remember_me: '1'
     assert_equal assigns(:user).remember_token, cookies[:remember_token]
-    # The reason we use the 'assigns()' method is becuase we can to compare the virtual attribute (remember_token) of the user to the actual cookie value on the browser. In tests we dont have access to virtual attrs nor do we have access to the object created in any of the methods in the controller. The only way we have access to the objects created in the controllers is if the controller created the object on an instance variable, which we can then access by using the assigns() method. It works like this - assigns(:object) - and then you can call attributes like this - assigns(:object).attributes - and its as simple as that. 
+    # The reason we use the 'assigns()' method is so we can compare the virtual attribute (remember_token) of the user to the actual cookie value on the browser. In tests we dont have access to virtual attrs nor do we have access to the object created in any of the methods in the controller. The only way we have access to the objects created in the controllers is if the controller created the object on an instance variable, which we can then access by using the assigns() method. It works like this - assigns(:object) - and then you can call attributes like this - assigns(:object).attributes - its as simple as that. 
   end
 
   test 'to login with remembering' do 
@@ -53,6 +53,21 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test 'to login without remembering' do 
     log_in_as @user, remember_me: '0' 
     assert_equal assigns(:user).remember_token, cookies[:remember_token]
+  end
+
+  test "should redirect edit when not logged in" do 
+    get edit_user_path(@user)
+    assert_redirected_to login_url
+    assert_not flash.empty?
+  end
+
+  test "should redirect update when not logged in" do 
+    patch user_path(@user), params: {user:{ name: 'foo bar',
+                                                                          email: 'foobar@example.com',
+                                                                          password: 'password', 
+                                                                          password_confirmation: 'password' }}
+    assert_redirected_to login_url
+    assert_not flash.empty?
   end
 
 end
