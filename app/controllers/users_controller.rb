@@ -10,7 +10,7 @@ class UsersController < ApplicationController
 
   # show all of the users
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   # update user data
@@ -32,15 +32,16 @@ class UsersController < ApplicationController
   # find user and render the profile
   def show
     @user = User.find_by(id: params[:id])
+    redirect_to root_url and return unless @user.activated?
   end
 
   # create new instance of user and save to the DB
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in @user
-      flash[:success] = "Welcome to the sample app!"
-      redirect_to user_path(@user.id)
+      @user.send_activation_email
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render :new
     end

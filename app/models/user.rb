@@ -1,11 +1,10 @@
 class User < ApplicationRecord
-    attr_accessor :remember_token
+    attr_accessor :remember_token, :activation_token
     VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
 
-    before_save do 
-        self.email.downcase! 
-        self.name.downcase!
-    end
+    before_save :format_email
+    before_create :create_activation_digest
+        
     validates :name, presence: true, length: { maximum: 20   }
     validates :email, presence: true, length: { maximum: 244 }, 
                                 format: { with: VALID_EMAIL_REGEX },
@@ -31,14 +30,40 @@ class User < ApplicationRecord
     end
 
     # Returns true if the given token matches the digest
-    def authenticated?(remember_token)
-        return false if self.remember_digest.nil?
-        # In the code below, we could have used self.remember_digest instead of just remember_digest
-        BCrypt::Password.new(self.remember_digest).is_password?(remember_token)
+    def authenticated?(attribute, token)
+        # In the code below we can simply call 'send' rather than 'self.send'. I left this here just as a note.
+        digest = self.send("#{attribute}_digest")
+        return false if digest.nil?
+        # In the code below, we could have used remember_digest instead of just self.remember_digest
+        BCrypt::Password.new(digest).is_password?(token)
     end
 
      # Forgets a user.
     def forget
         update_attribute(:remember_digest, nil)
     end
+
+    #send an activation email to the user
+    def send_activation_email
+        UserMailer.account_activation(self).deliver_now
+    end
+
+    # activates an account
+    def activate
+        update_columns(activated: true, activated_at: Time.zone.now)
+        # update_attribute(:activated, true)
+        # update_attribute(:activated_at, Time.zone.now)
+    end
+
+    private
+        def format_email
+            self.email.downcase! 
+            self.name.downcase!
+        end
+
+        # Creates and assignes the activation token and digest. 
+        def create_activation_digest
+            self.activation_token = User.new_token
+            self.activation_digest = User.digest(activation_token)
+        end
 end

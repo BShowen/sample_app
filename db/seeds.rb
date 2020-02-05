@@ -10,11 +10,15 @@ User.create!   name: "Bradley Showen",
                         email: "foo_bar@example.com",
                         password: 'password',
                         password_confirmation: 'password', 
-                        admin: true
+                        admin: true,
+                        activated: true,
+                        activated_at: Time.zone.now
 
 99.times do |n|
     User.create!   name: Faker::Name.name[0...20], 
                             email: "foo-bar-#{n + 1}@example.com",
                             password: 'password',
-                            password_confirmation: 'password'
+                            password_confirmation: 'password', 
+                            activated: true,
+                            activated_at: Time.zone.now
 end

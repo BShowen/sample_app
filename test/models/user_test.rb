@@ -79,6 +79,6 @@ class UserTest < ActiveSupport::TestCase
 
   # This test ensures no error is encountered when a user is remembered on two browsers, logs out on one browser, and then closes and re-opens the other browser. 
   test "authenticated? should return false for a user with nil digest" do
-    assert_not @user.authenticated?('')
+    assert_not @user.authenticated?(:remember, '')
   end
 end
