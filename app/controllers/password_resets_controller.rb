@@ -9,6 +9,7 @@ class PasswordResetsController < ApplicationController
   def edit
   end
 
+  # this is where the reset password form submits to. 
   def create
     @user = User.find_by(email: params[:password_reset][:email])
     if @user
@@ -22,6 +23,7 @@ class PasswordResetsController < ApplicationController
     end
   end
 
+  # this is where the create new password form submits to
   def update
     if user_params[:password].empty? # a failed update due to empty password 
       @user.errors.add(:password, "Password cant be empty")
