@@ -23,4 +23,4 @@
 .byebug_history
 
 #ignore ds file
-/lib/.DS_store
+.DS_Store
